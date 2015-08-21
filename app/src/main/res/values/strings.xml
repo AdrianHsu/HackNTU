@@ -1,0 +1,12 @@
+<resources>
+    <string name="app_name">hackNTU</string>
+    <string name="app_id">109363782748990</string>
+
+    <string name="hello_world">Hello world!</string>
+    <string name="drawer_item_focus">Focus</string>
+    <string name="drawer_item_timeline">Timeline</string>
+    <string name="drawer_item_settings">Settings</string>
+    <string name="action_settings">Settings</string>
+
+    <string name="drawer_item_logout">Log out</string>
+</resources>

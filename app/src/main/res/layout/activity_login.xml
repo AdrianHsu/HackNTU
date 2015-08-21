@@ -1,0 +1,42 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:gravity="center"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@drawable/login_background">
+
+    <!--<android.support.v7.widget.Toolbar-->
+        <!--android:id="@+id/toolbar"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="?attr/actionBarSize"-->
+        <!--android:background="?attr/colorPrimaryDark"-->
+        <!--android:elevation="4dp" />-->
+
+    <FrameLayout
+        android:layout_below="@id/toolbar"
+        android:id="@+id/frame_container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="100dp"
+
+            android:text="@string/com_facebook_loginview_log_in_button"
+            android:textColor="@color/com_facebook_share_button_text_color"
+            android:textSize="@dimen/com_facebook_share_button_text_size"
+            android:textStyle="bold"
+
+            android:background="@drawable/com_facebook_button_background"
+            android:drawableLeft="@drawable/com_facebook_button_icon"
+            android:drawablePadding="@dimen/com_facebook_share_button_compound_drawable_padding"
+            android:paddingLeft="@dimen/com_facebook_share_button_padding_left"
+            android:paddingTop="@dimen/com_facebook_share_button_padding_top"
+            android:paddingRight="@dimen/com_facebook_share_button_padding_right"
+            android:paddingBottom="@dimen/com_facebook_share_button_padding_bottom"
+            android:onClick="onLoginClick"
+            android:enabled="true" />
+    </FrameLayout>
+
+</RelativeLayout>
