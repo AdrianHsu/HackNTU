@@ -1,13 +1,17 @@
 package com.dots.hackntu;
 
 
+import android.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 
+import com.baoyz.widget.PullRefreshLayout;
 import com.mikepenz.iconics.typeface.FontAwesome;
 import com.mikepenz.materialdrawer.Drawer;
 import com.mikepenz.materialdrawer.DrawerBuilder;
@@ -18,10 +22,29 @@ import com.mikepenz.materialdrawer.model.ProfileDrawerItem;
 import com.mikepenz.materialdrawer.model.SecondaryDrawerItem;
 import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem;
 import com.mikepenz.materialdrawer.model.interfaces.IProfile;
+import com.parse.FindCallback;
+import com.parse.ParseException;
+import com.parse.ParseObject;
+import com.parse.ParseQuery;
 import com.parse.ParseUser;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import it.gmariotti.cardslib.library.internal.Card;
+import it.gmariotti.cardslib.library.internal.CardExpand;
+import it.gmariotti.cardslib.library.internal.CardHeader;
+import it.gmariotti.cardslib.library.internal.CardThumbnail;
 
 public class TimelineActivity extends ActionBarActivity {
+
+  public static PullRefreshLayout layout;
+  boolean init = false;
+
+  public static ArrayList<Card> cards = new ArrayList<Card>();
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -33,14 +56,109 @@ public class TimelineActivity extends ActionBarActivity {
 
     MainApplication.profile = new ProfileDrawerItem().withName(FocusActivity.userName).withEmail
       ("adrianhsu1995@gmail" + ".com")
-      .withIcon("http://graph.facebook.com/"+ FocusActivity.userId +"/picture?type=large");
+      .withIcon("http://graph.facebook.com/" + FocusActivity.userId + "/picture?type=large");
+
+    final JSONArray jsonArray = new JSONArray();
+
+    ParseQuery<ParseObject> query = ParseQuery.getQuery("FocusActivity");
+    query.whereEqualTo("userObjectId", ParseUser.getCurrentUser().getObjectId());
+    query.findInBackground(new FindCallback<ParseObject>() {
+      public void done(List<ParseObject> myList, ParseException e) {
+        if (e == null) {
+          for (int i = 0; i < myList.size(); i++) {
+            try {
+              jsonArray.put(i, myList.get(i));
+            } catch (JSONException e1) {
+              e1.printStackTrace();
+            }
+          }
+        } else {
+          Log.d(FocusActivity.TAG, "Error: " + e.getMessage());
+        }
+      }
+    });
+
+
+    if (savedInstanceState == null) {
+      FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+      RecyclerViewFragment fragment = new RecyclerViewFragment();
+      transaction.replace(R.id.sample_content_fragment, fragment);
+      transaction.commit();
+    }
+
+    layout = (PullRefreshLayout) findViewById(R.id.swipeRefreshLayout);
+    layout.setOnRefreshListener(new PullRefreshLayout.OnRefreshListener() {
+      @Override
+      public void onRefresh() {
+        layout.postDelayed(new Runnable() {
+          @Override
+          public void run() {
+//              updateAdapter(cards);
+            layout.setRefreshing(false);
+            RecyclerViewFragment.mAdapter.notifyDataSetChanged();
+          }
+        }, 2000);
+      }
+    });
+    layout.setRefreshStyle(PullRefreshLayout.STYLE_MATERIAL);
+
+    if (init == false) {
+      initCard();
+      init = true;
+    }
 
     // Create the AccountHeader
     buildHeader(false, savedInstanceState);
     buildDrawer(toolbar, savedInstanceState);
   }
 
+  public void initCard() {
+    for (int i = 0; i < 60; i++) {
+      //Create a Card
+      Card card = new Card(this);
+      card.setTitle("this is card #" + i);
+      //Create a CardHeader
+      CardHeader header = new CardHeader(this);
+      header.setTitle("Adrian's card");
+      header.setButtonExpandVisible(true);
 
+      //Add Header to card
+      card.addCardHeader(header);
+
+      //This provides a simple (and useless) expand area
+      CardExpand expand = new CardExpand(this);
+      //Set inner title in Expand Area
+      expand.setTitle("Expand Area test");
+      card.addCardExpand(expand);
+      card.setExpanded(false);
+
+      CardThumbnail thumb = new CardThumbnail(this);
+      thumb.setDrawableResource(R.drawable.adrian);
+      card.addCardThumbnail(thumb);
+
+      card.setClickable(true);
+      //Add ClickListener
+      card.setOnClickListener(new Card.OnCardClickListener() {
+
+        @Override
+        public void onClick(Card card, View view) {
+//            Toast.makeText(MainActivity.this, "Click Listener card=" + card.getTitle(), Toast
+//              .LENGTH_SHORT)
+//              .show();
+        }
+      });
+      cards.add(card);
+    }
+  }
+
+  /**
+   * Update the adapter
+   */
+  public void updateAdapter(ArrayList<Card> cards) {
+    if (cards != null) {
+//        RecyclerViewFragment.mAdapter.addAll(cards);
+    }
+  }
   private void buildDrawer(Toolbar toolbar, Bundle savedInstanceState) {
 
     //Create the drawer

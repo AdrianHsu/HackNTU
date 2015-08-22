@@ -131,7 +131,7 @@ public class FocusActivity extends AppCompatActivity implements View.OnClickList
   @Override
   public void onTimerStart(long timeStart) {
     Log.e(TAG, "onTimerStart " + timeStart);
-    
+
     string = (EditText) findViewById(R.id.edit_text);
     putFocusActivity(string.getText().toString());
 
@@ -141,6 +141,7 @@ public class FocusActivity extends AppCompatActivity implements View.OnClickList
 
     final ParseObject focusActivity = new ParseObject("FocusActivity");
     focusActivity.put("user", ParseUser.getCurrentUser());
+    focusActivity.put("userObjectId", ParseUser.getCurrentUser().getObjectId());
     focusActivity.put("focusContent", string);
     focusActivity.put("wasSucceeded", false);
     focusActivity.put("isRunning", true);
