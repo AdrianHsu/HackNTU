@@ -66,7 +66,7 @@ public class FocusActivity extends AppCompatActivity implements View.OnClickList
   static String objectId = "";
 
   MyTimer timer;
-  Button btn_start,btn_stop,btn_reset;
+  Button btn_start,btn_pause,btn_reset;
   EditText string;
 
 
@@ -98,10 +98,10 @@ public class FocusActivity extends AppCompatActivity implements View.OnClickList
     timer.setModel(Model.Timer);
     timer.setStartTime(1, 30, 30);
     btn_start = (Button) findViewById(R.id.btn_start);
-    btn_stop = (Button) findViewById(R.id.btn_stop);
+    btn_pause = (Button) findViewById(R.id.btn_pause);
     btn_reset = (Button) findViewById(R.id.btn_reset);
     btn_start.setOnClickListener(this);
-    btn_stop.setOnClickListener(this);
+    btn_pause.setOnClickListener(this);
     btn_reset.setOnClickListener(this);
 
   }
@@ -111,12 +111,19 @@ public class FocusActivity extends AppCompatActivity implements View.OnClickList
     switch (v.getId()){
       case R.id.btn_start:
         timer.start();
+        findViewById(R.id.btn_start).setClickable(false);
+        findViewById(R.id.btn_pause).setClickable(true);
+        findViewById(R.id.edit_text).setClickable(false);
         break;
-      case R.id.btn_stop:
+      case R.id.btn_pause:
         timer.stop();
+        findViewById(R.id.btn_start).setClickable(true);
+        findViewById(R.id.btn_pause).setClickable(false);
         break;
       case R.id.btn_reset:
         timer.reset();
+        findViewById(R.id.btn_start).setClickable(true);
+        findViewById(R.id.edit_text).setClickable(true);
         break;
     }
   }
@@ -124,6 +131,7 @@ public class FocusActivity extends AppCompatActivity implements View.OnClickList
   @Override
   public void onTimerStart(long timeStart) {
     Log.e(TAG, "onTimerStart " + timeStart);
+    
     string = (EditText) findViewById(R.id.edit_text);
     putFocusActivity(string.getText().toString());
 
@@ -137,8 +145,7 @@ public class FocusActivity extends AppCompatActivity implements View.OnClickList
     focusActivity.put("wasSucceeded", false);
     focusActivity.put("isRunning", true);
     focusActivity.put("stoppedAt", 0);
-    focusActivity.put("goalDuration", timer.getTimeStart().getTimeInMillis() - timer.getTimeRemain()
-      .getTimeInMillis());
+    focusActivity.put("goalDuration", MyTimer.duration);
 //
 //    LocationManager lm = (LocationManager)getSystemService(Context.LOCATION_SERVICE);
 //    double longitude = 0;
@@ -176,7 +183,7 @@ public class FocusActivity extends AppCompatActivity implements View.OnClickList
       public void done(ParseException e) {
         if (e == null) {
           // Saved successfully.
-          Log.d(TAG, "User update saved!");
+          Log.d(TAG, "focus update saved!");
           objectId = focusActivity.getObjectId();
           Log.d(TAG, "The object id is: " + objectId);
         } else {
@@ -194,10 +201,12 @@ public class FocusActivity extends AppCompatActivity implements View.OnClickList
   }
 
   @Override
-  public void onTimeStop(long timeStart, long timeRemain) {
-    Log.e(TAG,"onTimeStop timeRemain "+timeStart);
-    Log.e(TAG, "onTimeStop timeRemain " + timeRemain);
+  public void onTimePause(long timeStart, long timeRemain) {
+    Log.e(TAG,"onTimePause timeRemain "+timeStart);
+    Log.e(TAG, "onTimePause timeRemain " + timeRemain);
+  }
 
+  public static void onTimeReset() {
     ParseObject focusActivity = ParseObject.createWithoutData("FocusActivity", objectId);
 // Set a new value on quantity
     focusActivity.put("wasSucceeded", false);

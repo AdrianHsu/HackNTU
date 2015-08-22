@@ -32,6 +32,7 @@ public class MyTimer extends View {
     //在打Log的时候使用，节约时间
     private static final String tag = "pheynix";
     private static final String msg = ">>>>>>>>>>>>>>>>>>>>>> LOOK AT ME <<<<<<<<<<<<<<<<<<<<<<<<";
+    public static int duration;
 
 
     //flags
@@ -643,7 +644,8 @@ public class MyTimer extends View {
         isStarted = false;
 
         if (timeChangeListener != null) {
-            timeChangeListener.onTimeStop(timeStart.getTimeInMillis(), timeRemain.getTimeInMillis());
+            timeChangeListener.onTimePause(timeStart.getTimeInMillis(), timeRemain.getTimeInMillis
+              ());
         }
 
         return timeStart.getTimeInMillis() - timeRemain.getTimeInMillis();
@@ -690,6 +692,8 @@ public class MyTimer extends View {
         stop();
         isInitialized = false;
         invalidate();
+
+      FocusActivity.onTimeReset();
     }
 
     public boolean isMaxTime() {
@@ -709,7 +713,7 @@ public class MyTimer extends View {
 
         public void onTimeChange(long timeStart, long timeRemain);
 
-        public void onTimeStop(long timeStart, long timeRemain);
+        public void onTimePause(long timeStart, long timeRemain);
     }
 
     public interface OnMinChangListener {
@@ -752,6 +756,8 @@ public class MyTimer extends View {
                 timeStart.set(Calendar.HOUR_OF_DAY, h);
                 timeStart.set(Calendar.MINUTE, m);
                 timeStart.set(Calendar.SECOND, s);
+
+                duration = (h * 3600 + m * 60 + s) * 1000;
                 updateDegree();
                 invalidate();
             }
