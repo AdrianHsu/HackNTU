@@ -85,10 +85,10 @@ public class MyTimer extends View {
     private Paint paintGlowEffect;
 
     //color
-    private static final int colorDefault = 0xFFD6D6D6;
-    private static final int colorHour = 0xFF9AD13C;
-    private static final int colorMinute = 0xFFA55F7C;
-    private static final int colorSecond = 0xFF00BCD4;
+    private static final int colorDefault = 0xFFF0F1F2;
+    private static final int colorHour = 0xFF4AB471;
+    private static final int colorMinute = 0xFFCF5C60;
+    private static final int colorSecond = 0xFF4EB1CB;
 
     private static final int DEFAULT_VIEW_WIDTH = 720;
     private static final int DEFAULT_VIEW_HEIGHT = 720;
@@ -272,21 +272,21 @@ public class MyTimer extends View {
         paintNumber.getTextBounds(displayNumberHour, 0, displayNumberHour.length(), rect);
         canvas.drawText(displayNumberHour, centerXHour - rect.width() / 2, centerYHour + rect.height() / 2, paintNumber);
         paintNumber.setTextSize(25);
-        canvas.drawText("H", centerXHour + 30, centerYHour + 25, paintNumber);
+        canvas.drawText("Hours", centerXHour + 30, centerYHour + 25, paintNumber);
 
         paintNumber.setTextSize(70);
         paintNumber.setColor(colorMinute);
         paintNumber.getTextBounds(displayNumberMinute, 0, displayNumberMinute.length(), rect);
         canvas.drawText(displayNumberMinute, centerXMinute - rect.width() / 2, centerYMinute + rect.height() / 2, paintNumber);
         paintNumber.setTextSize(25);
-        canvas.drawText("M", centerXMinute + 50, centerYMinute + 25, paintNumber);
+        canvas.drawText("Minutes", centerXMinute + 50, centerYMinute + 25, paintNumber);
 
         paintNumber.setTextSize(70);
         paintNumber.setColor(colorSecond);
         paintNumber.getTextBounds(displayNumberSecond, 0, displayNumberSecond.length(), rect);
         canvas.drawText(displayNumberSecond, centerXSecond - rect.width() / 2, centerYSecond + rect.height() / 2, paintNumber);
         paintNumber.setTextSize(25);
-        canvas.drawText("S", centerXSecond + 50, centerYSecond + 25, paintNumber);
+        canvas.drawText("Seconds", centerXSecond + 50, centerYSecond + 25, paintNumber);
     }
 
 
@@ -545,6 +545,8 @@ public class MyTimer extends View {
                 case 2:
                     isStarted = false;
                     timerTask.cancel();
+                    Log.v(FocusActivity.TAG, "Time's up.");
+                    FocusActivity.onTimeDone(timeStart, timeRemain);
                     break;
 
                 //StopWatch running
@@ -653,7 +655,7 @@ public class MyTimer extends View {
     }
 
 
-    public Calendar getTimeRemaid() {
+    public Calendar getTimeRemain() {
         return timeRemain;
     }
 

@@ -2,7 +2,7 @@ apply plugin: 'com.android.application'
 
 android {
     compileSdkVersion 22
-    buildToolsVersion "23.0.0 rc3"
+    buildToolsVersion "23.0.0"
 
     defaultConfig {
         applicationId "com.dots.hackntu"
@@ -36,4 +36,6 @@ dependencies {
         transitive = true
     }
     compile 'com.squareup.picasso:picasso:2.5.2'
+    compile 'com.rengwuxian.materialedittext:library:2.1.4'
+    compile 'com.google.android.gms:play-services:6.5.87'
 }

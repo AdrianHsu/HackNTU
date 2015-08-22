@@ -72,7 +72,6 @@ public class LoginActivity extends Activity {
   }
 
   private void showFocusActivity() {
-    FocusActivity.makeMeRequest();
     Intent intent = new Intent(this, FocusActivity.class);
     startActivity(intent);
   }

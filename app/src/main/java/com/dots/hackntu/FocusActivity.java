@@ -1,10 +1,16 @@
 package com.dots.hackntu;
 
 
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.drawable.Drawable;
+import android.location.GpsStatus;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
+import android.location.LocationProvider;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.AppCompatActivity;
@@ -14,7 +20,9 @@ import android.view.View;
 import android.view.animation.Interpolator;
 import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.dots.hackntu.MainApplication;
 import com.facebook.AccessToken;
@@ -33,24 +41,34 @@ import com.mikepenz.materialdrawer.model.ProfileDrawerItem;
 import com.mikepenz.materialdrawer.model.SecondaryDrawerItem;
 import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem;
 import com.mikepenz.materialdrawer.model.interfaces.IProfile;
+import com.parse.ParseException;
+import com.parse.ParseGeoPoint;
 import com.parse.ParseInstallation;
+import com.parse.ParseObject;
 import com.parse.ParseUser;
+import com.parse.SaveCallback;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.Calendar;
+
 
 public class FocusActivity extends AppCompatActivity implements View.OnClickListener, MyTimer
-  .OnTimeChangeListener, MyTimer.OnSecondChangListener,MyTimer.OnMinChangListener,MyTimer.OnHourChangListener {
+  .OnTimeChangeListener, MyTimer.OnSecondChangListener,MyTimer.OnMinChangListener,MyTimer
+  .OnHourChangListener {
 
 //  private ProfilePictureView userProfilePictureView;
 //  private TextView userNameView;
   public static String userName = "";
   public static Long userId;
-  private static String TAG = "Focus";
+  public static String TAG = "Focus";
+  static String objectId = "";
 
   MyTimer timer;
   Button btn_start,btn_stop,btn_reset;
+  EditText string;
+
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -66,12 +84,10 @@ public class FocusActivity extends AppCompatActivity implements View.OnClickList
     MainApplication.profile = new ProfileDrawerItem().withName(userName).withEmail
     ("adrianhsu1995@gmail" + ".com")
     .withIcon("http://graph.facebook.com/" + userId + "/picture?type=large");
-//      .withIcon(getResources().getDrawable(R.drawable.profile));
 
     // Create the AccountHeader
     buildHeader(false, savedInstanceState);
     buildDrawer(toolbar, savedInstanceState);
-
 
 
     timer = (MyTimer) findViewById(R.id.timer);
@@ -80,13 +96,14 @@ public class FocusActivity extends AppCompatActivity implements View.OnClickList
     timer.setMinChangListener(this);
     timer.setHourChangListener(this);
     timer.setModel(Model.Timer);
-    timer.setStartTime(1,30,30);
+    timer.setStartTime(1, 30, 30);
     btn_start = (Button) findViewById(R.id.btn_start);
     btn_stop = (Button) findViewById(R.id.btn_stop);
     btn_reset = (Button) findViewById(R.id.btn_reset);
     btn_start.setOnClickListener(this);
     btn_stop.setOnClickListener(this);
     btn_reset.setOnClickListener(this);
+
   }
 
   @Override
@@ -107,18 +124,94 @@ public class FocusActivity extends AppCompatActivity implements View.OnClickList
   @Override
   public void onTimerStart(long timeStart) {
     Log.e(TAG, "onTimerStart " + timeStart);
+    string = (EditText) findViewById(R.id.edit_text);
+    putFocusActivity(string.getText().toString());
+
+  }
+
+  public void putFocusActivity(String string) {
+
+    final ParseObject focusActivity = new ParseObject("FocusActivity");
+    focusActivity.put("user", ParseUser.getCurrentUser());
+    focusActivity.put("focusContent", string);
+    focusActivity.put("wasSucceeded", false);
+    focusActivity.put("isRunning", true);
+    focusActivity.put("stoppedAt", 0);
+    focusActivity.put("goalDuration", timer.getTimeStart().getTimeInMillis() - timer.getTimeRemain()
+      .getTimeInMillis());
+//
+//    LocationManager lm = (LocationManager)getSystemService(Context.LOCATION_SERVICE);
+//    double longitude = 0;
+//    double latitude = 0;
+//
+//    final LocationListener locationListener = new LocationListener() {
+//
+//      public void onLocationChanged(Location location) {
+//
+//      }
+//
+//      @Override
+//      public void onStatusChanged(String provider, int status, Bundle extras) {
+//
+//      }
+//
+//      @Override
+//      public void onProviderEnabled(String provider) {
+//
+//      }
+//
+//      @Override
+//      public void onProviderDisabled(String provider) {
+//
+//      }
+//    };
+//    lm.requestLocationUpdates(LocationManager.GPS_PROVIDER, 2000, 10, locationListener);
+//    latitude = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER).getLatitude();
+//    longitude = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER).getLongitude();
+//    ParseGeoPoint gp = new ParseGeoPoint((int)(latitude * 1e6),(int)(longitude *
+//      1e6));
+//    focusActivity.put("location", gp);
+
+    focusActivity.saveEventually(new SaveCallback() {
+      public void done(ParseException e) {
+        if (e == null) {
+          // Saved successfully.
+          Log.d(TAG, "User update saved!");
+          objectId = focusActivity.getObjectId();
+          Log.d(TAG, "The object id is: " + objectId);
+        } else {
+          // The save failed.
+          Log.d(TAG, "User update error: " + e);
+        }
+      }
+    });
   }
 
   @Override
   public void onTimeChange(long timeStart, long timeRemain) {
-    Log.e(TAG,"onTimeChange timeStart "+timeStart);
-    Log.e(TAG,"onTimeChange timeRemain "+timeRemain);
+    Log.e(TAG, "onTimeChange timeStart " + timeStart);
+    Log.e(TAG, "onTimeChange timeRemain " + timeRemain);
   }
 
   @Override
   public void onTimeStop(long timeStart, long timeRemain) {
     Log.e(TAG,"onTimeStop timeRemain "+timeStart);
-    Log.e(TAG,"onTimeStop timeRemain "+timeRemain);
+    Log.e(TAG, "onTimeStop timeRemain " + timeRemain);
+
+    ParseObject focusActivity = ParseObject.createWithoutData("FocusActivity", objectId);
+// Set a new value on quantity
+    focusActivity.put("wasSucceeded", false);
+    focusActivity.put("isRunning", false);
+    focusActivity.put("stoppedAt", System.currentTimeMillis());
+    focusActivity.saveEventually();
+  }
+  public static void onTimeDone(Calendar timeStart, Calendar timeRemain) {
+    ParseObject focusActivity = ParseObject.createWithoutData("FocusActivity", objectId);
+// Set a new value on quantity
+    focusActivity.put("wasSucceeded", true);
+    focusActivity.put("isRunning", false);
+    focusActivity.put("stoppedAt", System.currentTimeMillis());
+    focusActivity.saveEventually();
   }
 
   @Override
@@ -135,6 +228,7 @@ public class FocusActivity extends AppCompatActivity implements View.OnClickList
   public void onMinChange(int minute) {
     Log.e(TAG, "minute change to "+minute);
   }
+
   private void buildDrawer(Toolbar toolbar, Bundle savedInstanceState) {
 
     //Create the drawer
