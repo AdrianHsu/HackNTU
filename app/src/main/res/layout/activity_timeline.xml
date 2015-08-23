@@ -1,21 +1,35 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                android:gravity="center"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent">
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:orientation="vertical"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:id="@+id/sample_main_layout">
 
-    <android.support.v7.widget.Toolbar
-        android:id="@+id/toolbar"
-        android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
-        android:background="?attr/colorPrimaryDark"
-        android:elevation="4dp" />
+<android.support.v7.widget.Toolbar
+    android:id="@+id/toolbar"
+    android:layout_width="match_parent"
+    android:layout_height="?attr/actionBarSize"
+    android:background="?attr/colorPrimaryDark"
+    android:elevation="4dp" />
 
-    <FrameLayout
-        android:layout_below="@id/toolbar"
-        android:id="@+id/frame_container"
+    <com.baoyz.widget.PullRefreshLayout
+        android:id="@+id/swipeRefreshLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-    </FrameLayout>
+        <FrameLayout
+            android:layout_below="@id/toolbar"
+            android:id="@+id/sample_content_fragment"
+            android:layout_weight="2"
+            android:layout_width="match_parent"
+            android:layout_height="0px" />
+        <!--<FrameLayout-->
+            <!--android:layout_below="@id/toolbar"-->
+            <!--android:id="@+id/frame_container"-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="match_parent">-->
 
-</RelativeLayout>
+        <!--</FrameLayout>-->
+    </com.baoyz.widget.PullRefreshLayout>
+
+
+</LinearLayout>

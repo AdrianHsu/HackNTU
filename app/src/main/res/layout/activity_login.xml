@@ -20,10 +20,10 @@
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
+            android:layout_gravity="center_horizontal|bottom"
             android:layout_marginTop="100dp"
 
-            android:text="@string/com_facebook_loginview_log_in_button"
+            android:text="@string/com_facebook_loginview_log_in_button_long"
             android:textColor="@color/com_facebook_share_button_text_color"
             android:textSize="@dimen/com_facebook_share_button_text_size"
             android:textStyle="bold"
@@ -37,6 +37,15 @@
             android:paddingBottom="@dimen/com_facebook_share_button_padding_bottom"
             android:onClick="onLoginClick"
             android:enabled="true" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="FOCUS / GEO ISSUE"
+            android:textColor="@color/com_facebook_share_button_text_color"
+            android:textSize="30dp"
+            android:id="@+id/textView"
+            android:layout_gravity="center"/>
     </FrameLayout>
 
 </RelativeLayout>

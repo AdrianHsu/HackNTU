@@ -80,7 +80,6 @@ public class FocusActivity extends AppCompatActivity implements View.OnClickList
     Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
     setSupportActionBar(toolbar);
 
-    Log.v(TAG, userName);
     MainApplication.profile = new ProfileDrawerItem().withName(userName).withEmail
     ("adrianhsu1995@gmail" + ".com")
     .withIcon("http://graph.facebook.com/" + userId + "/picture?type=large");
@@ -88,7 +87,6 @@ public class FocusActivity extends AppCompatActivity implements View.OnClickList
     // Create the AccountHeader
     buildHeader(false, savedInstanceState);
     buildDrawer(toolbar, savedInstanceState);
-
 
     timer = (MyTimer) findViewById(R.id.timer);
     timer.setOnTimeChangeListener(this);
@@ -131,7 +129,7 @@ public class FocusActivity extends AppCompatActivity implements View.OnClickList
   @Override
   public void onTimerStart(long timeStart) {
     Log.e(TAG, "onTimerStart " + timeStart);
-    
+
     string = (EditText) findViewById(R.id.edit_text);
     putFocusActivity(string.getText().toString());
 
@@ -141,6 +139,7 @@ public class FocusActivity extends AppCompatActivity implements View.OnClickList
 
     final ParseObject focusActivity = new ParseObject("FocusActivity");
     focusActivity.put("user", ParseUser.getCurrentUser());
+    focusActivity.put("userObjectId", ParseUser.getCurrentUser().getObjectId());
     focusActivity.put("focusContent", string);
     focusActivity.put("wasSucceeded", false);
     focusActivity.put("isRunning", true);
@@ -251,8 +250,10 @@ public class FocusActivity extends AppCompatActivity implements View.OnClickList
           .faw_check_circle_o).withIdentifier(0),
         new PrimaryDrawerItem().withName(R.string.drawer_item_timeline).withIcon(FontAwesome.Icon
           .faw_clock_o).withIdentifier(1),
+        new PrimaryDrawerItem().withName(R.string.drawer_item_map).withIcon(FontAwesome.Icon
+          .faw_map_marker).withIdentifier(2),
         new PrimaryDrawerItem().withName(R.string.drawer_item_logout).withIcon(FontAwesome.Icon
-          .faw_sign_out).withIdentifier(2)
+          .faw_sign_out).withIdentifier(3)
         )
       .addStickyDrawerItems(
         new SecondaryDrawerItem().withName(R.string.drawer_item_settings).withIcon(FontAwesome
@@ -274,6 +275,8 @@ public class FocusActivity extends AppCompatActivity implements View.OnClickList
             } else if (drawerItem.getIdentifier() == 1) {
               intent = new Intent(FocusActivity.this, TimelineActivity.class);
             } else if (drawerItem.getIdentifier() == 2) {
+              intent = new Intent(FocusActivity.this, MainActivity.class);
+            } else if (drawerItem.getIdentifier() == 3) {
               ParseUser.logOut();
               intent = new Intent(FocusActivity.this, LoginActivity.class);
             } else if (drawerItem.getIdentifier() == 7) {
